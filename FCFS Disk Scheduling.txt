@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n, head, i, total = 0;
+
+    printf("Enter number of requests: ");
+    scanf("%d", &n);
+
+    int req[n];
+    printf("Enter request sequence:\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &req[i]);
+    }
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("\nSequence of head movement:\n");
+    for (i = 0; i < n; i++) {
+        printf("%d -> %d\n", head, req[i]);
+        total += abs(req[i] - head);
+        head = req[i];
+    }
+
+    printf("\nTotal head movement = %d\n", total);
+
+    return 0;
+}
+
+OUTPUT:
+Enter number of requests: 5
+Enter request sequence:
+55 58 39 18 90
+Enter initial head position: 50
+
+Sequence of head movement:
+50 -> 55
+55 -> 58
+58 -> 39
+39 -> 18
+18 -> 90
+
+Total head movement = 167
+

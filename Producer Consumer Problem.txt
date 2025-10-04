@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 3
+
+int buffer[BUFFER_SIZE];
+int in = 0, out = 0, count = 0;
+
+void produce(int item) {
+    if (count == BUFFER_SIZE) {
+        printf("Buffer is FULL! Cannot produce %d\n", item);
+        return;
+    }
+    buffer[in] = item;
+    in = (in + 1) % BUFFER_SIZE;
+    count++;
+    printf("Produced: %d | Buffer count = %d\n", item, count);
+}
+
+void consume() {
+    if (count == 0) {
+        printf("Buffer is EMPTY! Cannot consume\n");
+        return;
+    }
+    int item = buffer[out];
+    out = (out + 1) % BUFFER_SIZE;
+    count--;
+    printf("Consumed: %d | Buffer count = %d\n", item, count);
+}
+
+int main() {
+    char cmd[10];
+    int item, choice = 1;
+
+    printf("Producer-Consumer Simulation\n");
+    printf("Commands: produce <num>, consume, exit\n");
+
+    while (1) {
+        printf("\nEnter command: ");
+        scanf("%s", cmd);
+
+        if (strcmp(cmd, "produce") == 0) {
+            scanf("%d", &item);
+            produce(item);
+        } 
+        else if (strcmp(cmd, "consume") == 0) {
+            consume();
+        } 
+        else if (strcmp(cmd, "exit") == 0) {
+            break;
+        } 
+        else {
+            printf("Invalid command! Use produce <num>, consume, exit\n");
+        }
+    }
+
+    return 0;
+}
+
+OUTPUT
+Producer-Consumer Simulation
+Commands: produce <num>, consume, exit
+
+Enter command: produce 1
+Produced: 1 | Buffer count = 1
+
+Enter command: produce 2
+Produced: 2 | Buffer count = 2
+
+Enter command: produce 3
+Produced: 3 | Buffer count = 3
+
+Enter command: produce 4
+Buffer is FULL! Cannot produce 4
+
+Enter command: consume
+Consumed: 1 | Buffer count = 2
+
+Enter command: consume
+Consumed: 2 | Buffer count = 1
+
+Enter command: consume
+Consumed: 3 | Buffer count = 0
+
+Enter command: consume
+Buffer is EMPTY! Cannot consume
+
+Enter command: 
+>>>>>>>>>>>>>

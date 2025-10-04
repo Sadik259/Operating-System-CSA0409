@@ -1,0 +1,94 @@
+#include <stdio.h>
+
+int predict(int pages[], int frames[], int n, int index, int f) {
+    int res = -1, farthest = index;
+    for (int i = 0; i < f; i++) {
+        int j;
+        for (j = index; j < n; j++) {
+            if (frames[i] == pages[j]) {
+                if (j > farthest) {
+                    farthest = j;
+                    res = i;
+                }
+                break;
+            }
+        }
+        if (j == n) return i;
+    }
+    return (res == -1) ? 0 : res;
+}
+
+int main() {
+    int n, f;
+    printf("Enter number of pages: ");
+    scanf("%d", &n);
+
+    int pages[n];
+    printf("Enter the page reference sequence: ");
+    for (int i = 0; i < n; i++) scanf("%d", &pages[i]);
+
+    printf("Enter number of frames: ");
+    scanf("%d", &f);
+
+    int frames[f];
+    for (int i = 0; i < f; i++) frames[i] = -1;
+
+    int page_faults = 0;
+
+    printf("\nOptimal Page Replacement Simulation:\n");
+
+    for (int i = 0; i < n; i++) {
+        int page = pages[i], found = 0;
+
+        for (int j = 0; j < f; j++) {
+            if (frames[j] == page) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            int pos = -1;
+            for (int j = 0; j < f; j++) {
+                if (frames[j] == -1) {
+                    pos = j;
+                    break;
+                }
+            }
+            if (pos == -1) pos = predict(pages, frames, n, i + 1, f);
+            frames[pos] = page;
+            page_faults++;
+        }
+
+        printf("After accessing page %d: ", page);
+        for (int j = 0; j < f; j++) {
+            if (frames[j] != -1) printf("%d ", frames[j]);
+            else printf("- ");
+        }
+        if (!found) printf("(Page Fault)");
+        printf("\n");
+    }
+
+    printf("\nTotal Page Faults: %d\n", page_faults);
+    return 0;
+}
+
+OUTPUT
+Enter number of pages: 6
+Enter the page reference sequence: 1
+2
+4
+3
+2
+1
+Enter number of frames: 3
+
+Optimal Page Replacement Simulation:
+After accessing page 1: 1 - - (Page Fault)
+After accessing page 2: 1 2 - (Page Fault)
+After accessing page 4: 1 2 4 (Page Fault)
+After accessing page 3: 1 2 3 (Page Fault)
+After accessing page 2: 1 2 3 
+After accessing page 1: 1 2 3 
+
+Total Page Faults: 4

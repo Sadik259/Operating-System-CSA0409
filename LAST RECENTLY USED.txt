@@ -1,0 +1,89 @@
+#include <stdio.h>
+
+int findLRU(int time[], int n) {
+    int min = time[0], pos = 0;
+    for (int i = 1; i < n; i++) {
+        if (time[i] < min) {
+            min = time[i];
+            pos = i;
+        }
+    }
+    return pos;
+}
+
+int main() {
+    int n, f;
+    printf("Enter number of pages: ");
+    scanf("%d", &n);
+
+    int pages[n];
+    printf("Enter the page reference sequence: ");
+    for (int i = 0; i < n; i++) scanf("%d", &pages[i]);
+
+    printf("Enter number of frames: ");
+    scanf("%d", &f);
+
+    int frames[f], time[f];
+    for (int i = 0; i < f; i++) frames[i] = -1;
+
+    int counter = 0, page_faults = 0;
+
+    printf("\nLRU Page Replacement Simulation:\n");
+
+    for (int i = 0; i < n; i++) {
+        int page = pages[i], found = 0;
+        for (int j = 0; j < f; j++) {
+            if (frames[j] == page) {
+                counter++;
+                time[j] = counter;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            int pos = -1;
+            for (int j = 0; j < f; j++) {
+                if (frames[j] == -1) {
+                    pos = j;
+                    break;
+                }
+            }
+            if (pos == -1) pos = findLRU(time, f);
+            frames[pos] = page;
+            counter++;
+            time[pos] = counter;
+            page_faults++;
+        }
+        printf("After accessing page %d: ", page);
+        for (int j = 0; j < f; j++) {
+            if (frames[j] != -1) printf("%d ", frames[j]);
+            else printf("- ");
+        }
+        if (!found) printf("(Page Fault)");
+        printf("\n");
+    }
+
+    printf("\nTotal Page Faults: %d\n", page_faults);
+    return 0;
+}
+
+OUTPUT
+Enter number of pages: 6
+Enter the page reference sequence: 1
+2
+3
+1
+2
+1
+Enter number of frames: 3
+
+LRU Page Replacement Simulation:
+After accessing page 1: 1 - - (Page Fault)
+After accessing page 2: 1 2 - (Page Fault)
+After accessing page 3: 1 2 3 (Page Fault)
+After accessing page 1: 1 2 3 
+After accessing page 2: 1 2 3 
+After accessing page 1: 1 2 3 
+
+Total Page Faults: 3
+

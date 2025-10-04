@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort(int arr[], int n) {
+    int i, j, temp;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j+1]) {
+                temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int n, head, i, j, disk, total = 0, direction;
+
+    printf("Enter number of requests: ");
+    scanf("%d", &n);
+    int req[n];
+    printf("Enter request sequence:\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &req[i]);
+    }
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter total disk size (e.g. 200): ");
+    scanf("%d", &disk);
+
+    printf("Enter head direction (0 for left, 1 for right): ");
+    scanf("%d", &direction);
+
+    // Add head, 0 and disk to request list
+    req[n] = head;
+    n++;
+    sort(req, n);
+
+    int pos;
+    for (i = 0; i < n; i++) {
+        if (req[i] == head) {
+            pos = i;
+            break;
+        }
+    }
+
+    printf("\nSequence of head movement:\n");
+
+    if (direction == 0) { // left
+        for (i = pos; i >= 0; i--) {
+            printf("%d -> ", req[i]);
+        }
+        printf("0 -> ");
+        for (i = pos + 1; i < n; i++) {
+            printf("%d -> ", req[i]);
+        }
+    } else { // right
+        for (i = pos; i < n; i++) {
+            printf("%d -> ", req[i]);
+        }
+        printf("%d -> ", disk-1);
+        for (i = pos-1; i >= 0; i--) {
+            printf("%d -> ", req[i]);
+        }
+    }
+
+    // Calculate total movement
+    total = (direction == 0) ? (head + (disk - 1 - req[0])) 
+                             : ((disk - 1 - head) + req[n-1]);
+
+    printf("\n\nTotal head movement = %d\n", total);
+
+    return 0;
+}
+
+
+OUTPUT:
+Enter number of requests: 8
+Enter request sequence:
+176 79 34 60 92 11 41 114
+Enter initial head position: 50
+Enter total disk size (e.g. 200): 200
+Enter head direction (0 for left, 1 for right): 1
+
+
+Sequence of head movement:
+50 -> 60 -> 79 -> 92 -> 114 -> 176 -> 199 -> 41 -> 34 -> 11 -> 
+
+Total head movement = 389

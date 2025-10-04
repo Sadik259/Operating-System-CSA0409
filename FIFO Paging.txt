@@ -1,0 +1,101 @@
+#include <stdio.h>
+
+int findLRU(int time[], int n) {
+    int i, min = time[0], pos = 0;
+    for (i = 1; i < n; ++i) {
+        if (time[i] < min) {
+            min = time[i];
+            pos = i;
+        }
+    }
+    return pos;
+}
+
+int main() {
+    int frames[10], pages[30], time[10];
+    int n, f, page_faults = 0, counter = 0;
+    
+    printf("Enter number of pages: ");
+    scanf("%d", &n);
+    
+    printf("Enter the page reference sequence: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &pages[i]);
+    }
+    
+    printf("Enter number of frames: ");
+    scanf("%d", &f);
+    
+    for (int i = 0; i < f; i++) frames[i] = -1;
+    
+    printf("\nLRU Page Replacement Simulation:\n");
+    
+    for (int i = 0; i < n; i++) {
+        int found = 0;
+        
+        // Check if page is already in frames
+        for (int j = 0; j < f; j++) {
+            if (frames[j] == pages[i]) {
+                counter++;
+                time[j] = counter;
+                found = 1;
+                break;
+            }
+        }
+        
+        // If page not found → Page Fault
+        if (!found) {
+            int pos = -1;
+            
+            // If there is an empty frame
+            for (int j = 0; j < f; j++) {
+                if (frames[j] == -1) {
+                    pos = j;
+                    break;
+                }
+            }
+            
+            // If no empty frame → replace least recently used
+            if (pos == -1) {
+                pos = findLRU(time, f);
+            }
+            
+            frames[pos] = pages[i];
+            counter++;
+            time[pos] = counter;
+            page_faults++;
+        }
+        
+        // Print frame status
+        printf("After accessing page %d: ", pages[i]);
+        for (int j = 0; j < f; j++) {
+            if (frames[j] != -1) printf("%d ", frames[j]);
+            else printf("- ");
+        }
+        if (!found) printf(" (Page Fault)");
+        printf("\n");
+    }
+    
+    printf("\nTotal Page Faults: %d\n", page_faults);
+    
+    return 0;
+}
+
+OUTPUT
+Enter number of pages: 5
+Enter the page reference sequence: 1
+
+2
+1
+3
+4
+Enter number of frames: 3
+
+LRU Page Replacement Simulation:
+After accessing page 1: 1 - -  (Page Fault)
+After accessing page 2: 1 2 -  (Page Fault)
+After accessing page 1: 1 2 - 
+After accessing page 3: 1 2 3  (Page Fault)
+After accessing page 4: 1 4 3  (Page Fault)
+
+Total Page Faults: 4
